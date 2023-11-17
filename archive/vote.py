@@ -16,6 +16,7 @@ class CandidateButton(discord.ui.Button):
         await interaction.response.defer()
 
 class Voting(discord.ui.View):
+    candidates = ['Asish', 'Declan', 'Dylan', 'Ethan G', 'Gavin', 'Jeffrey W', 'Juliana', 'Kevin', 'Matthew F', 'Oliver', 'Vaish']
     def __init__(self, authorId, message, db):
         super().__init__()
         self.message = message
@@ -95,7 +96,7 @@ class Voting(discord.ui.View):
                     else:
                         if child.label in self.vote:
                             child.disabled = True
-    
+
                         else:
                             child.disabled = False
 
@@ -165,7 +166,7 @@ class Voting(discord.ui.View):
             """
             for index, vote in enumerate(self.vote):
                 msg = f"{msg}\n{index+1}. {vote}"
-            
+
             action_button.label = "X"
             action_button.style = discord.ButtonStyle.danger
             new_embed.description = msg
@@ -187,6 +188,9 @@ class Voting(discord.ui.View):
             for index, vote in enumerate(self.vote):
                 msg = f"{msg}\n{index+1}. {vote}"
 
+            if len(self.vote) < len(self.candidates):
+                msg = f"{msg}\n\n**BEWARE: YOU HAVE NOT RANKED ALL THE CANDIDATES!** Your vote will count less than others."
+
             action_button.label = "✓"
             action_button.style = discord.ButtonStyle.danger
             new_embed.description = msg
@@ -205,6 +209,7 @@ class Voting(discord.ui.View):
                         else:
                             child.disabled = True
 
+
         elif self.page ==3+len(self.candidates)+2:
             msg = """
             Thank you for voting! If at any point you want to see your vote, do `dis vote` (or your prefix) again!
@@ -214,7 +219,7 @@ class Voting(discord.ui.View):
             new_embed.description = msg
             for child in self.children:
                 child.disabled = True
-            
+
 
         await self.message.edit(view=self, embed=new_embed)
 
@@ -230,15 +235,15 @@ class Voting(discord.ui.View):
     @discord.ui.button(label='<', style=discord.ButtonStyle.blurple)
     async def backward(self, interaction: discord.Interaction,
                        button: discord.ui.Button):
-        
+
         if self.page != 0:
             self.page -= 1
 
         if self.page >= 3 and self.page < 3+len(self.candidates):
             self.lastViewed = self.page
 
-                    
-                           
+
+
         await self.update()
         await interaction.response.defer()
 
@@ -279,7 +284,7 @@ class Voting(discord.ui.View):
 
         await self.update()
         await interaction.response.edit_message()
-                             
+
 
 async def process_command(message, db):
     command = message.content.split()[1]
@@ -288,13 +293,13 @@ async def process_command(message, db):
         await message.add_reaction("👍")
         if str(message.author.id) in db["votes"].keys():
             msg = "Your vote was:"
-            
+
             for index, vote in enumerate(db["votes"][str(message.author.id)]):
                 msg = f"{msg}\n{index+1}. {vote}"
 
-        
+
             await channel.send(msg)
-                
+
 
         else:
             embed = discord.Embed(
@@ -304,7 +309,12 @@ async def process_command(message, db):
                 "Welcome to the Stoga Sophomores November Election. By participating, you agree to the [terms and conditions](https://disappointment-points.frankanator433.repl.co/ballottoc)"
             )
             voter = Voting(message.author.id, None, db)
-            msg = await channel.send(embed=embed, view=voter)
+            try:
+                msg = await channel.send(embed=embed, view=voter)
+
+            except discord.errors.Forbidden:
+                await message.channel.send("I can't DM you. Enable DMs from server members in Server Settings -> Privacy & Safety -> Allow direct messages from server members.")
+                return
             voter.message = msg
             await voter.update()
 
@@ -316,23 +326,22 @@ async def process_command(message, db):
                     if person not in voteCount.keys():
                         voteCount[person] = 0
 
-                    voteCount[person] += len(self.candidates) - index
+                    voteCount[person] += len(db["votes"][key]) - index
 
-            out = ""
-            translate = {
-                'Asish':643953075798933544, 'Declan':674367708971794483, 'Dylan':612067775388581899, 'Ethan G':873370390100049931, 'Gavin':475791868777594902, 'Jeffrey W':480879708364472347, 'Juliana':1115719653382180936, 'Kevin':712801780936998993, 'Matthew F':710265799700643911, 'Oliver':381471603869089792, 'Vaish':457630638388805633
-            }
-            
-            
+            out = f"Total votes: {len(db['votes'])}\n"
+
+            sortedC = []
             for key, value in voteCount.items():
-                member = get(message.guild.members, id=translate[key])
-                out = f"{out}{member} - {value}\n"
+                sortedC.append((key, value))
+            sortedC.sort(key=lambda x:x[1], reverse=True)
+            for key, value in sortedC:
+                out = f"{out}{key} - {value}\n"
 
             channel = await message.author.create_dm()
             await channel.send(out)
             await message.add_reaction("👍")
             return
-                
+
 
         else:
             await message.channel.send("Only <@695290142721572935> can do this.")
