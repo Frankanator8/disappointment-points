@@ -64,44 +64,13 @@ async def on_message(message):
                 await message.channel.send(
                     "You can now post in announcements for 45 seconds.")
 
-        if command in ["prefix", "pref", "setprefix", "setpref"]:
-            try:
-                db["prefixes"][author.id] = content.split()[2]
-                await message.channel.send(
-                    f"Prefix set to `{content.split()[2]}`")
 
-            except IndexError:
-                await message.channel.send("No prefix provided.")
-
-        if command in ["sync"]:
-            if author.id == 695290142721572935:
-                fmt = await client.tree.sync()
-                await message.channel.send(
-                    f"Synced {len(fmt)} commands to the current server"
-                )
-            return
-
-
-        if command in ["pfp"]:
-            img = None
-            for attachment in message.attachments:
-                img = requests.get(attachment.url).content
-                break
-
-            if img is not None:
-                await SERVER.edit(icon=img)
-            return
 
 class ServerClock(commands.Cog):
     def __init__(self, client):
         self.client = client
         self.discordTunnelMsgIds = set()
 
-    @tasks.loop(seconds=15.0)
-    async def set_server(self):
-        global SERVER, MOD_ROLE
-        SERVER = self.client.get_guild(886651493556572220)
-        MOD_ROLE = get(SERVER.roles, name="Mod")
 
     @tasks.loop(seconds=1.0)
     async def announce_duration(self):
@@ -116,18 +85,6 @@ class ServerClock(commands.Cog):
                 db["announcement_cooldown"][key] = time.time()
 
 
-    @tasks.loop(seconds=2.0)
-    async def discordTunnel(self):
-        ch = await get(SERVER.members, id=612067775388581899).create_dm()
-
-        for message in reversed([i async for i in ch.history(limit=100)]):
-            if message.id not in self.discordTunnelMsgIds:
-                print(f"({message.created_at}){str(message.author)}/{str(message.author.id)} - {str(message.content)}")
-                self.discordTunnelMsgIds.add(message.id)
-
-        next = input()
-        if next != "":
-            await ch.send(next)
 
     @set_server.before_loop
     async def before_tick(self):
