@@ -5,6 +5,7 @@ from discord.ext import tasks, commands
 import asyncio
 
 from activity.activityManager import ActivityManager
+from birthday.birthdaySetManager import BirthdayManager
 from snipe.snipeSetManager import SnipeManager
 
 intents = discord.Intents.default()
@@ -12,7 +13,7 @@ intents.members = True
 intents.message_content = True
 client = discord.ext.commands.Bot("", intents=intents)
 
-commandManagers = [ActivityManager(client), SnipeManager(client)]
+commandManagers = [ActivityManager(client), SnipeManager(client), BirthdayManager(client)]
 
 @client.event
 async def on_ready():
@@ -53,6 +54,7 @@ async def on_message(message):
 
     for commandSetManager in commandManagers:
         await commandSetManager.on_message(message)
+
 # @client.tree.command(name="schedule", description="Show your current schedule, or set on the first turn")
 # async def sched(interaction: discord.Interaction):
 #     if str(interaction.user.id) not in db["schedules"].keys():
@@ -105,7 +107,7 @@ class ServerClock(commands.Cog):
     @tasks.loop(seconds=1.0)
     async def tick(self):
         for commandSetManager in commandManagers:
-            commandSetManager.on_tick(1.0)
+            await commandSetManager.on_tick(1.0)
 
 
     @tick.before_loop

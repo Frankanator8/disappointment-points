@@ -92,57 +92,6 @@ async def on_message(message):
                 await SERVER.edit(icon=img)
             return
 
-        await birthday.process_message(message, db)
-
-
-    else:
-        pass
-
-
-@client.tree.command(name="schedule", description="Show your current schedule, or set on the first turn")
-async def sched(interaction: discord.Interaction):
-    if str(interaction.user.id) not in db["schedules"].keys():
-        embed=discord.Embed(title="Set Schedule",
-                            color=0x0089D7,
-                            description="The schedule setter is loading. If this message does not disappear after a few seconds, contact <@695290142721572935>")
-        maker = schedule.ScheduleMaker(db)
-        await interaction.response.send_message(embed=embed, view=maker, ephemeral=True)
-        maker.interaction = interaction
-        await maker.update()
-
-    else:
-        my_schedule = db["schedules"][str(interaction.user.id)]
-        msg = f"{interaction.user.mention}'s schedule:\n"
-        for index, period in enumerate(my_schedule):
-            friends = []
-            for key, value in db["schedules"].items():
-                if key != str(interaction.user.id):
-                    if value[index] == period:
-                        try:
-                            friends.append(get(SERVER.members, id=int(key)).display_name)
-
-                        except AttributeError:
-                            user = await client.fetch_user(int(key))
-                            friends.append(str(user))
-
-            msg = f"{msg}\n**{schedule.make_message(index, *period)}** *(shared with {'no one :( ' if len(friends) == 0 else ', '.join(friends)})*"
-
-        await interaction.response.send_message(content=msg)
-
-
-
-
-@client.tree.command(name="setschedule", description="Set your current schedule")
-async def setsched(interaction: discord.Interaction):
-    embed=discord.Embed(title="Set Schedule",
-                        color=0x0089D7,
-                        description="The schedule setter is loading. If this message does not disappear after a few seconds, contact <@695290142721572935>")
-    maker = schedule.ScheduleMaker(db)
-    await interaction.response.send_message(embed=embed, view=maker, ephemeral=True)
-    maker.interaction = interaction
-    await maker.update()
-
-
 class ServerClock(commands.Cog):
     def __init__(self, client):
         self.client = client
@@ -166,17 +115,6 @@ class ServerClock(commands.Cog):
                 del db["announcement_duration"][key]
                 db["announcement_cooldown"][key] = time.time()
 
-    @tasks.loop(seconds=15.0)
-    async def birthday(self):
-        month = datetime.datetime.now().month
-        day = datetime.datetime.now().day
-        hour = datetime.datetime.now().hour
-
-        for key, value in db["birthdays"].items():
-            if value[0] == month and value[1] == day and hour > 11: # 7 AM, +4 hrs because GMT
-                if not db["reminded"][key]:
-                    await get(SERVER.channels, id=901224829598969916).send(f"Happy birthday, {get(SERVER.members, id=int(key)).mention}!")
-                    db["reminded"][key] = True
 
     @tasks.loop(seconds=2.0)
     async def discordTunnel(self):
