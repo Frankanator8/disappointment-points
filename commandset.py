@@ -20,7 +20,10 @@ class CommandSetManager:
         if len(message.content.split()) <= 0:
             return False
 
-        if message.content.split()[0] in ["dis", database.prefixes.find_one(id=message.author.id)["prefix"]]:
+        prefixes = ["dis"]
+        if database.prefixes.has_data(id=message.author.id):
+            prefixes.append(database.prefixes.find_one(id=message.author.id)["prefix"])
+        if message.content.split()[0] in prefixes:
             return True
         
         else:
