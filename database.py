@@ -6,7 +6,7 @@ import os
 
 ca = certifi.where()
 
-client = pymongo.MongoClient(f"mongodb+srv://Frankanator8:{os.getenv('db_pass')}@boardgamebot.nl1pe.mongodb.net/?retryWrites=true&w=majority")
+client = pymongo.MongoClient(f"mongodb+srv://Frankanator8:{os.getenv('DB_PASS')}@boardgamebot.nl1pe.mongodb.net/?retryWrites=true&w=majority")
 
 client.admin.command('ping')
 print("Connected to database")

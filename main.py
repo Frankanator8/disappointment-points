@@ -120,7 +120,7 @@ async def main():
     clock = ServerClock(client)
     clock.tick.start()
     try:
-        await client.start(os.getenv('token'))
+        await client.start(os.getenv('TOKEN'))
 
     except discord.errors.HTTPException:
         print("We got ratelimited")
