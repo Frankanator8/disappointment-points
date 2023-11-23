@@ -5,6 +5,7 @@ from discord.ext import tasks, commands
 import asyncio
 
 from activity.activityManager import ActivityManager
+from announcements.announcementSetManager import AnnouncementManager
 from birthday.birthdaySetManager import BirthdayManager
 from misc.miscSetManager import MiscManager
 from snipe.snipeSetManager import SnipeManager
@@ -14,7 +15,8 @@ intents.members = True
 intents.message_content = True
 client = discord.ext.commands.Bot("", intents=intents)
 
-commandManagers = [ActivityManager(client), SnipeManager(client), BirthdayManager(client), MiscManager(client)]
+commandManagers = [ActivityManager(client), SnipeManager(client), BirthdayManager(client), MiscManager(client),
+                   AnnouncementManager(client)]
 
 @client.event
 async def on_ready():

@@ -51,6 +51,12 @@ class Database:
     def add_list(self, key, item, **search):
         self.db.update_one(search, {"$push":{key: item}})
 
+    def delete_data(self, **search):
+        self.db.delete_one(search)
+
+    def delete_many(self, **search):
+        self.db.delete_many(search)
+
 activity = Database("disappointmentpoints", "activity")
 weekActivity = Database("disappointmentpoints", "weekactivity")
 announcement = Database("disappointmentpoints", "announcement")
