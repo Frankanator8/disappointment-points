@@ -57,8 +57,12 @@ class Database:
     def delete_many(self, **search):
         self.db.delete_many(search)
 
+    def len(self):
+        return self.db.count_documents({})
+
 activity = Database("disappointmentpoints", "activity")
 weekActivity = Database("disappointmentpoints", "weekactivity")
+activityData = Database("disappointmentpoints", "activitydata")
 announcement = Database("disappointmentpoints", "announcement")
 prefixes = Database("disappointmentpoints", "prefixes")
 birthday = Database("disappointmentpoints", "birthday")
