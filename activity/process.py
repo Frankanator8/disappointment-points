@@ -1,6 +1,7 @@
 import time
 
 import database
+from activity.activityDb import add_points_overall, add_points_weekly
 from activity.pointscalc import get_required_points
 
 BLACKLISTED_CHANNELS = [
@@ -28,24 +29,8 @@ def process_message(message):
 
     if len(database.activityData.find_one(fId="messages")["msgs"]) >= 100:
         for count in database.activityData.find(fId="messageCount"):
-            userData = database.activity.find_one(id=count["id"])
-            userData["progress"] += 1 + round((count["count"]-1) / 100, 2)
-            if userData["progress"] >= get_required_points(userData["activity"]):
-                userData["progress"] = 0
-                userData["activity"] += 1
-
-            database.activity.update_data("progress", userData["progress"], id=count["id"])
-            database.activity.update_data("activity", userData["activity"], id=count["id"])
-
-
-            userData = database.weekActivity.find_one(id=count["id"])
-            userData["progress"] += 1 + round((count["count"]-1) / 100, 2)
-            if userData["progress"] >= get_required_points(userData["activity"]):
-                userData["progress"] = 0
-                userData["activity"] += 1
-
-            database.weekActivity.update_data("progress", userData["progress"], id=count["id"])
-            database.weekActivity.update_data("activity", userData["activity"], id=count["id"])
+            add_points_overall(count["id"], 1 + round((count["count"]-1) / 100, 2))
+            add_points_weekly(count["id"], 1 + round((count["count"]-1) / 100, 2))
 
         database.activityData.delete_many(fId="messageCount")
         database.activityData.update_data("msgs", [], fId="messages")
