@@ -89,8 +89,6 @@ async def on_message(message):
 #         await interaction.response.send_message(content=msg)
 
 
-
-
 # @client.tree.command(name="setschedule", description="Set your current schedule")
 # async def setsched(interaction: discord.Interaction):
 #     embed=discord.Embed(title="Set Schedule",
