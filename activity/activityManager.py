@@ -46,8 +46,8 @@ class ActivityManager(CommandSetManager):
                 if database.activityData.has_data(fId="voiceStart", id=member.id):
                     elapsed = time.time() - database.activityData.find_one(fId="voiceStart", id=member.id)["time"]
                     database.activityData.delete_data(fId="voiceStart", id=member.id)
-                    add_points_overall(member.id, get_required_points(database.activity.find_one(id=member.id)["activity"]) * elapsed/3600)
-                    add_points_weekly(member.id, get_required_points(database.weekActivity.find_one(id=member.id)["activity"]) * elapsed/3600)
+                    add_points_overall(member.id, 3 * elapsed/3600)
+                    add_points_weekly(member.id, 3 * elapsed/3600)
                     # print(f"{member.display_name} removed")
 
                 if not self.check_valid_vc(before.channel):
@@ -55,8 +55,8 @@ class ActivityManager(CommandSetManager):
                         if database.activityData.has_data(fId="voiceStart", id=vcMember.id):
                             elapsed = time.time() - database.activityData.find_one(fId="voiceStart", id=vcMember.id)["time"]
                             database.activityData.delete_data(fId="voiceStart", id=vcMember.id)
-                            add_points_overall(vcMember.id, get_required_points(database.activity.find_one(id=vcMember.id)["activity"]) * elapsed/3600)
-                            add_points_weekly(vcMember.id, get_required_points(database.weekActivity.find_one(id=vcMember.id)["activity"]) * elapsed/3600)
+                            add_points_overall(vcMember.id, 3 * elapsed/3600)
+                            add_points_weekly(vcMember.id, 3 * elapsed/3600)
                             #  print(f"{vcMember.display_name} removed")
 
 
@@ -79,8 +79,8 @@ class ActivityManager(CommandSetManager):
                         if database.activityData.has_data(fId="voiceStart", id=member.id):
                             elapsed = time.time() - database.activityData.find_one(fId="voiceStart", id=member.id)["time"]
                             database.activityData.delete_data(fId="voiceStart", id=member.id)
-                            add_points_overall(member.id, get_required_points(database.activity.find_one(id=member.id)["activity"]) * elapsed/3600)
-                            add_points_weekly(member.id, get_required_points(database.weekActivity.find_one(id=member.id)["activity"]) * elapsed/3600)
+                            add_points_overall(member.id, 3 * elapsed/3600)
+                            add_points_weekly(member.id, 3 * elapsed/3600)
                             # print(f"{member.display_name} removed")
 
                     if not self.check_valid_vc(before.channel):
@@ -88,16 +88,16 @@ class ActivityManager(CommandSetManager):
                             if database.activityData.has_data(fId="voiceStart", id=vcMember.id):
                                 elapsed = time.time() - database.activityData.find_one(fId="voiceStart", id=vcMember.id)["time"]
                                 database.activityData.delete_data(fId="voiceStart", id=vcMember.id)
-                                add_points_overall(vcMember.id, get_required_points(database.activity.find_one(id=vcMember.id)["activity"]) * elapsed/3600)
-                                add_points_weekly(vcMember.id, get_required_points(database.weekActivity.find_one(id=vcMember.id)["activity"]) * elapsed/3600)
+                                add_points_overall(vcMember.id, 3 * elapsed/3600)
+                                add_points_weekly(vcMember.id, 3 * elapsed/3600)
                                 # print(f"{vcMember.display_name} removed")
 
             if (after.mute or after.self_mute) and not (before.mute or after.self_mute):
                 if database.activityData.has_data(fId="voiceStart", id=member.id):
                     elapsed = time.time() - database.activityData.find_one(fId="voiceStart", id=member.id)["time"]
                     database.activityData.delete_data(fId="voiceStart", id=member.id)
-                    add_points_overall(member.id, get_required_points(database.activity.find_one(id=member.id)["activity"]) * elapsed/3600)
-                    add_points_weekly(member.id, get_required_points(database.weekActivity.find_one(id=member.id)["activity"]) * elapsed/3600)
+                    add_points_overall(member.id, 3 * elapsed/3600)
+                    add_points_weekly(member.id, 3 * elapsed/3600)
                     # print(f"{member.display_name} removed")
 
                 if not self.check_valid_vc(after.channel):
@@ -105,8 +105,8 @@ class ActivityManager(CommandSetManager):
                         if database.activityData.has_data(fId="voiceStart", id=vcMember.id):
                             elapsed = time.time() - database.activityData.find_one(fId="voiceStart", id=vcMember.id)["time"]
                             database.activityData.delete_data(fId="voiceStart", id=vcMember.id)
-                            add_points_overall(vcMember.id, get_required_points(database.activity.find_one(id=vcMember.id)["activity"]) * elapsed/3600)
-                            add_points_weekly(vcMember.id, get_required_points(database.weekActivity.find_one(id=vcMember.id)["activity"]) * elapsed/3600)
+                            add_points_overall(vcMember.id, 3 * elapsed/3600)
+                            add_points_weekly(vcMember.id, 3 * elapsed/3600)
                             # print(f"{vcMember.display_name} removed")
 
             else:
