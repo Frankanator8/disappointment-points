@@ -1,4 +1,5 @@
 import time
+import traceback
 
 import database
 from activity.activityDb import add_points_overall, add_points_weekly
@@ -28,9 +29,13 @@ def process_message(message):
         database.activityData.update_inc("count", 1, fId="messageCount", id=author.id)
 
     if len(database.activityData.find_one(fId="messages")["msgs"]) >= 100:
-        for count in database.activityData.find(fId="messageCount"):
-            add_points_overall(count["id"], 1 + round((count["count"]-1) / 100, 2))
-            add_points_weekly(count["id"], 1 + round((count["count"]-1) / 100, 2))
+        try:
+            for count in database.activityData.find(fId="messageCount"):
+                add_points_overall(count["id"], 1 + round((count["count"]-1) / 100, 2))
+                add_points_weekly(count["id"], 1 + round((count["count"]-1) / 100, 2))
 
-        database.activityData.delete_many(fId="messageCount")
-        database.activityData.update_data("msgs", [], fId="messages")
+            database.activityData.delete_many(fId="messageCount")
+            database.activityData.update_data("msgs", [], fId="messages")
+
+        except Exception as e:
+            print(traceback.format_exc())
