@@ -20,7 +20,7 @@ class AprilFoolsManager(CommandSetManager):
                 await message.channel.send("Welcome to the Spring Break event! This game's a detective game, and the winner will get $5.")
                 await message.channel.send("Essentially, you can try and impersonate someone  - this means that every single one of your messages will show up as 'theirs'. Do `dis apr i [someone]` to do this. Note, this [someone] doesn't have to be a ping! It can either be their nickname or discord tag")
                 await message.channel.send("Try and impersonate them as close as possible. For every message you send as the impersonator, you earn an extra point that you can redeem later by reverting to your original self by just typing `dis apr i` again. However, once you revert, you have to wait 30 minutes to impersonate again.")
-                await message.channel.send("However, someone can steal your points! If you do `dis apr c [impersonator] [impersonated]` (these must be pings) on someone else and you are right, you get all the points the other has gotten so far. However, if you are wrong, you lose 15 points!")
+                await message.channel.send("However, someone can steal your points! If you do `dis apr c [impersonator] [impersonated]` (these must be pings) on someone else and you are right, you get all the points the other has gotten so far. However, if you are wrong, you lose 7 points!")
                 await message.channel.send("do `dis apr lb` to check the current leaderboard. Note that during this time, `dis lb` and `dis snipe` will be disabled.")
             elif command in ["imp", "impersonate", "i"]:
                 can = longterm.can_impersonate(message.author.id)
@@ -50,6 +50,10 @@ class AprilFoolsManager(CommandSetManager):
                         await message.channel.send("Provide a valid ping or spell out their discord tag or display name")
 
                 else:
+                    if ping.id == message.author.id:
+                        await message.channel.send("You can't impersonate yourself")
+                        return
+
                     if database.aprilfools.has_data(id=message.author.id):
                         database.aprilfools.update_data("to_id", ping.id, id=message.author.id)
 
@@ -77,12 +81,12 @@ class AprilFoolsManager(CommandSetManager):
                             longterm.restrict_time(impersonator.id)
 
                         else:
-                            await message.channel.send("Incorrect. -15 points.")
-                            longterm.add_points(message.author.id, -15)
+                            await message.channel.send("Incorrect. -7 points.")
+                            longterm.add_points(message.author.id, -7)
 
                     else:
-                        await message.channel.send("Incorrect. -15 points.")
-                        longterm.add_points(message.author.id, -15)
+                        await message.channel.send("Incorrect. -7 points.")
+                        longterm.add_points(message.author.id, -7)
 
             elif command in ["leaderboard", "lb"]:
                 lb = Leaderboard(self.server, self.client)
