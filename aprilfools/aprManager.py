@@ -101,8 +101,8 @@ class AprilFoolsManager(CommandSetManager):
                 await message.delete()
                 content = pingFilter.filter_content(message.content)
                 channel = message.channel
-
-                database.aprilfools.update_inc("msgs", 1, id=message.author.id)
+                if message.channel.id not in [936716274833162322, 975925480882585610]:
+                    database.aprilfools.update_inc("msgs", 1, id=message.author.id)
                 author = self.server.get_member(database.aprilfools.find_one(id=message.author.id)["to_id"])
 
                 avatar = requests.get(author.avatar).content
