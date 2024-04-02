@@ -15,6 +15,12 @@ class AprilFoolsManager(CommandSetManager):
 
     async def on_message(self, message):
         if self.is_my_message(message):
+            await message.channel.send("The event has ended! The leaderboard is as follows:")
+            lb = Leaderboard(self.server, self.client)
+            msg = await message.channel.send("Loading...", view=lb)
+            lb.message = msg
+            await lb.update()
+            return
             command = message.content.split()[2]
             if command in ["help"]:
                 await message.channel.send("Welcome to the Spring Break event! This game's a detective game, and the winner will get $5.")
@@ -97,6 +103,7 @@ class AprilFoolsManager(CommandSetManager):
 
 
         else:
+            return
             if database.aprilfools.has_data(id=message.author.id):
                 await message.delete()
                 content = pingFilter.filter_content(message.content)

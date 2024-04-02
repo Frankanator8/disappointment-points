@@ -19,8 +19,6 @@ class ActivityManager(CommandSetManager):
         if self.is_my_message(message):
             command = message.content.split()[1]
             if command in ["leaderboard", "lb"]:
-                await message.channel.send("`lb` has been disabled for the Spring Break event.")
-                return
                 lb = Leaderboard(self.server, self.client)
                 msg = await message.channel.send("Loading...", view=lb)
                 lb.message = msg

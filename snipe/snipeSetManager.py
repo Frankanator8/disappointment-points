@@ -53,8 +53,6 @@ class SnipeManager(CommandSetManager):
 
     async def on_message(self, message):
         if self.is_my_message(message):
-            await message.channel.send("`snipe` has been disabled for the Spring Break event.")
-            return
             if not database.snipe.has_data(channel=message.channel.id):
                 await message.channel.send("This channel has no snipe messages")
                 return
